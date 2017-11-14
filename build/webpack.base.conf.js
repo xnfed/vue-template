@@ -19,7 +19,8 @@ function resolve (dir) {
 const webpackConfig = {
   // 入口配置
   entry: {
-    app: ['babel-polyfill',  './src/main.js' ]// webpack的入口文件名
+    app: ['babel-polyfill', './src/main.js' ], // webpack的入口文件名
+    vendor: ['vue', 'vue-router', 'vuex', 'axios']
   },
   // 出口配置
   output: {
