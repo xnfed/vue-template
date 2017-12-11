@@ -34,8 +34,8 @@ var webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {// 指定生产环境中的输出文件路径
     path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].js'),
-    chunkFilename: utils.assetsPath('js/[name].[id].[chunkhash].js') // chunkFilename请参考 http://react-china.org/t/webpack-output-filename-output-chunkfilename/2256/2
+    filename: utils.assetsPath('js/[name]-[chunkhash:8].js'),
+    chunkFilename: utils.assetsPath('js/[name]-[chunkhash:8].js') // chunkFilename请参考 http://react-china.org/t/webpack-output-filename-output-chunkfilename/2256/2
   },
   plugins: [
     // 注意：插件在接受字符串的值时要用JSON.stringify进行处理，如 a:'a' 要写成 a:JSON.stringify('a')

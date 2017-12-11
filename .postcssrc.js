@@ -10,10 +10,9 @@ module.exports = {
     // browser option
     'postcss-cssnext': {
       'browsers': [
-        'iOS >= 8',
-        'Chrome >= 45',
-        'Android >= 4',
-        'IE > 10'
+        '> 1%',
+        'last 2 versions',
+        'IE > 8'
       ]
     },
     'postcss-bem': {
