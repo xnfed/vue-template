@@ -33,7 +33,7 @@ var webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {// 指定生产环境中的输出文件路径
     path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].js'),
+    filename: utils.assetsPath('js/[name].[hash:8].js'),
     chunkFilename: utils.assetsPath('js/[name].[id].[chunkhash].js') // chunkFilename请参考 http://react-china.org/t/webpack-output-filename-output-chunkfilename/2256/2
   },
   plugins: [
@@ -58,7 +58,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // 生成独立css文件的插件
     // extract css into its own file
     new ExtractTextPlugin({
-        filename: utils.assetsPath('css/[name].css'),
+        filename: utils.assetsPath('css/[name].[hash:8].css'),
         // 抽取vue里面scope里样式为独立样式文件
         allChunks: true
     }),

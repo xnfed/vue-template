@@ -1,50 +1,153 @@
+var path = require('path')
 var utils = require('./utils')
 var webpack = require('webpack')
 var config = require('../config')
-// 用于合并多个webpack配置文件
 var merge = require('webpack-merge')
+var baseWebpackConfig = require('./webpack.base.dev.conf')
 
-// 导入webpack基本配置
-var baseWebpackConfig = require('./webpack.base.conf')
+// 复制文件(文件夹)的插件
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 // webpack处理html的插件，可以按自义定规则生成html文件
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
-// 用于更友好地输出webpack的警告、错误等信息
-var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+// webpack插件，将css文件独立出来，不将css打包到js文件中
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
-// add hot-reload related code to entry chunks
-// 将 Hot-reload 相对路径添加到 webpack.base.conf 的 对应 entry 前
-Object.keys(baseWebpackConfig.entry).forEach(function (name) {
-  baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
-})
+// webpack压缩css的插件
+var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+
+// 指定当前运行环境为"release"
+
+var env = config.dev.env
+
 
 // 将webpack基本配置合并进去
-module.exports = merge(baseWebpackConfig, {
+var webpackConfig = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap }) // 调用styleLoaders方法，返回各种css loader
+    rules: utils.styleLoaders({ // 调用styleLoaders方法，生成各种css loader
+      sourceMap: config.dev.productionSourceMap,
+      extract: true // 指定生成单独的css文件，不与js混合
+    })
   },
-  // cheap-module-eval-source-map is faster for development
   // 指定生成source-map的规则
-  devtool: '#cheap-module-eval-source-map',
+  devtool: config.dev.productionSourceMap ? '#source-map' : false,
+  output: {// 指定生产环境中的输出文件路径
+    path: config.dev.assetsRoot,
+    filename: utils.assetsPath('js/[name].[hash:8].js'),
+    chunkFilename: utils.assetsPath('js/[name].[id].[chunkhash].js') // chunkFilename请参考 http://react-china.org/t/webpack-output-filename-output-chunkfilename/2256/2
+  },
   plugins: [
-    // 定义全局常量量的插件，在代码中调用process.env会以config.dev.env代替
     // 注意：插件在接受字符串的值时要用JSON.stringify进行处理，如 a:'a' 要写成 a:JSON.stringify('a')
+    // http://vuejs.github.io/vue-loader/en/workflow/production.html
+    // 指定生产环境，以便在压缩时可以让 UglifyJS 自动删除代码块内的警告语句。
     new webpack.DefinePlugin({
-      'process.env': config.dev.env
+      'process.env': env
     }),
-    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
-    new webpack.HotModuleReplacementPlugin(),
-    // 跳过编译时出错的代码并记录，使编译后运行时的包不会发生错误
-    new webpack.NoEmitOnErrorsPlugin(),
+    // 压缩js的插件
+    // new webpack.optimize.UglifyJsPlugin({
+    //   minimize: true,
+    //   beautify: false,
+    //   comments: false,
+    //   compress: {
+    //     drop_debugger: true,
+    //     drop_console: true,
+    //     warnings: false
+    //   },
+    //   sourceMap: false // 生成source-map
+    // }),
+    // 生成独立css文件的插件
+    // extract css into its own file
+    new ExtractTextPlugin({
+        filename: utils.assetsPath('css/[name].[hash:8].css'),
+        // 抽取vue里面scope里样式为独立样式文件
+        allChunks: true
+    }),
+    // 用来压缩独立的css文件，尽可能的复用不同组件相同的css
+    // Compress extracted CSS. We are using this plugin so that possible
+    // duplicated CSS from different components can be deduped.
+    new OptimizeCSSPlugin({
+      cssProcessorOptions: {
+        safe: true
+      }
+    }),
     // 根据模板生成对应的html文件
-    // https://github.com/ampedandwired/html-webpack-plugin
+    // generate dist index.html with correct asset hash for caching.
+    // you can customize output by editing /index.html
+    // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      // 路径是相对于webpack编译时的上下文目录，说白了就是项目根目录，因此上面可以直接配置index.html，其指向的就是根目录下的index.html
-      filename: 'index.html', // 生成的文件名
-      template: 'index.html', // 模板文件，即根据这个模板文件生成相应的文件 , 是相对于webpack配置项output.path
-      inject: true // 是否将生成的js注入 html
+      filename: config.dev.index, // 生成的文件名
+      template: 'index.html',
+      inject: true, // 是否将生成的js注入 html
+      minify: {
+        removeComments: true, // 去除文件注释
+        collapseWhitespace: true, // 去除空白格
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // 使用CommonsChunkPlugin必须配置
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
     }),
-    new FriendlyErrorsPlugin()
+    // 将模块中的公共代码分离成独立的一个文件。将来自node_modules下的模块提取到vendor.js（一般来讲都是外部库，短时间不会发生变化）（参考 https://segmentfault.com/a/1190000006808865）
+    // split vendor js into its own file
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: function (module, count) {
+        // 公共模块被使用的最小次数。比如配置为3，也就是同一个模块只有被3个以外的页面同时引用时才会被提取出来作为common chunks。(引用自 http://www.cnblogs.com/souvenir/p/5012552.html)
+        // any required modules inside node_modules are extracted to vendor
+        return (
+          module.resource &&
+          /\.js$/.test(module.resource) &&
+          module.resource.indexOf(
+            path.join(__dirname, '../node_modules')
+          ) === 0
+        )
+      }
+    }),
+    // extract webpack runtime and module manifest to its own file in order to
+    // prevent vendor hash from being updated whenever app bundle is updated
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      chunks: ['vendor']
+    }),
+    // static文件夹中的内容复制到指定路径
+    // copy custom static assets
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: config.dev.assetsSubStatic,
+        ignore: ['.*']
+      }
+    ])
   ]
 })
+
+if (config.dev.productionGzip) {
+  // webpack压缩插件
+  var CompressionWebpackPlugin = require('compression-webpack-plugin')
+
+  webpackConfig.plugins.push(
+    new CompressionWebpackPlugin({
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: new RegExp(
+        '\\.(' +
+        config.dev.productionGzipExtensions.join('|') +
+        ')$'
+      ),
+      threshold: 10240, // 当大于这个值时启用压缩
+      minRatio: 0.8
+    })
+  )
+}
+
+if (config.dev.bundleAnalyzerReport) {
+  // 可视化打包情况，参阅 https://npm.taobao.org/package/webpack-bundle-analyzer
+  var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+  webpackConfig.plugins.push(new BundleAnalyzerPlugin())
+}
+
+// 导出webpackConfig
+module.exports = webpackConfig

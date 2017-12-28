@@ -4,28 +4,8 @@ var path = require('path')
 module.exports = {
   build: {
     env: require('./prod.env'),
-    index: path.resolve(__dirname, '../dist/index.html'),
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubStatic: 'static',
-    assetsSubDirectory: '',
-    assetsPublicPath: '//static1.jd.id/m-flight/',
-    productionSourceMap: true,
-    // Gzip off by default as many popular static hosts such as
-    // Surge or Netlify already gzip all static assets for you.
-    // Before setting to `true`, make sure to:
-    // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
-    productionGzipExtensions: ['js', 'css'],
-    // Run the build command with an extra argument to
-    // View the bundle analyzer report after build finishes:
-    // `npm run build --report`
-    // Set to `true` or `false` to always turn it on or off
-    bundleAnalyzerReport: process.env.npm_config_report
-  },
-  release: {
-    env: require('./release.env'),
-    index: path.resolve(__dirname, '../dist/index.html'),
-    assetsRoot: path.resolve(__dirname, '../dist'),
+    index: path.resolve(__dirname, '../dist/prod/index.html'),
+    assetsRoot: path.resolve(__dirname, '../dist/prod'),
     assetsSubStatic: 'static',
     assetsSubDirectory: '',
     assetsPublicPath: '//static1.jd.id/m-flight/',
@@ -44,6 +24,26 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
+    index: path.resolve(__dirname, '../dist/dev/index.html'),
+    assetsRoot: path.resolve(__dirname, '../dist/dev'),
+    assetsSubStatic: 'static',
+    assetsSubDirectory: '',
+    assetsPublicPath: '//static1.jd.id/m-flight/',
+    productionSourceMap: true,
+    // Gzip off by default as many popular static hosts such as
+    // Surge or Netlify already gzip all static assets for you.
+    // Before setting to `true`, make sure to:
+    // npm install --save-dev compression-webpack-plugin
+    productionGzip: false,
+    productionGzipExtensions: ['js', 'css'],
+    // Run the build command with an extra argument to
+    // View the bundle analyzer report after build finishes:
+    // `npm run build --report`
+    // Set to `true` or `false` to always turn it on or off
+    bundleAnalyzerReport: process.env.npm_config_report
+  },
+  start: {
+    env: require('./start.env'),
     host: 'http://localhost:',
     port: 8080, // 与后端服务端口保持一致
     autoOpenBrowser: true,

@@ -4,8 +4,8 @@
     "description": "a vue.js project created by vfly",
     "scripts": {
         "start": "node build/dev-server.js",
-        "build:release": "cross-env NODE_ENV=release node build/build-release.js",
-        "build:prod": "node build/build.js",
+        "dev": "cross-env NODE_ENV=dev node build/build-dev.js",
+        "prod": "node build/build.js",
         "analyz": "NODE_ENV=production npm_config_report=true npm run build"
     },
     "author": "xnfed",

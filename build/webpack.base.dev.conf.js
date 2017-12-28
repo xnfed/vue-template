@@ -23,10 +23,10 @@ const webpackConfig = {
   },
   // 出口配置
   output: {
-    path: config.build.assetsRoot, // 出口文件的路径
+    path: config.dev.assetsRoot, // 出口文件的路径
     filename: '[name].js', // 出口文件名
     publicPath: process.env.NODE_ENV === 'release'
-      ? config.build.assetsPublicPath
+      ? config.dev.assetsPublicPath
       : config.dev.assetsPublicPath // publicPath指定打包后静态资源的路径
   },
   resolve: {

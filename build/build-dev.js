@@ -2,7 +2,7 @@
 require('./check-versions')()
 
 // 指定为dev环境
-process.env.NODE_ENV = 'release'
+process.env.NODE_ENV = 'dev'
 
 // 实现node.js 命令行环境的 loading效果， 和显示各种状态的图标等。参考 https://segmentfault.com/q/1010000008330147
 var ora = require('ora')
@@ -23,13 +23,13 @@ var webpack = require('webpack')
 var config = require('../config')
 
 // 引入webpack配置
-var webpackConfig = require('./webpack.release.conf')
+var webpackConfig = require('./webpack.dev.conf')
 // 显示进度条
 var spinner = ora('building for release...')
 spinner.start()
 
 // 删除dist/static
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
+rm(path.join(config.dev.assetsRoot, config.dev.assetsSubDirectory), err => {
   if (err) throw err
 
   // 编译配置文件

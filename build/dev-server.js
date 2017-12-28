@@ -4,7 +4,7 @@ require('./check-versions')()
 // 引入配置文件
 var config = require('../config')
 if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
+  process.env.NODE_ENV = JSON.parse(config.start.env.NODE_ENV)
 }
 
 // 用于打开完整的模块，（也可以打开文件）。参考 https://www.npmjs.com/package/opn
@@ -20,22 +20,22 @@ var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 
 // 引入webpack配置
-var webpackConfig = require('./webpack.dev.conf')
+var webpackConfig = require('./webpack.start.conf')
 
 // 指定监听的端口
 // default port where dev server listens for incoming traffic
-var port = process.env.PORT || config.dev.port
+var port = process.env.PORT || config.start.port
 // 指定本地服务的域名
-var host = config.dev.host || 'http://localhost:'
+var host = config.start.host || 'http://localhost:'
 
 // 是否自动在浏览器中打开页面，如果config中没有设置，则为false（不自动打开）
 // automatically open browser, if not set will be false
-var autoOpenBrowser = !!config.dev.autoOpenBrowser
+var autoOpenBrowser = !!config.start.autoOpenBrowser
 
 // 读取config中代理的配置
 // Define HTTP proxies to your custom API backend
 // https://github.com/chimurai/http-proxy-middleware
-var proxyTable = config.dev.proxyTable
+var proxyTable = config.start.proxyTable
 
 var app = express()
 
@@ -91,7 +91,7 @@ app.use(hotMiddleware)
 // 构建静态资源路径
 // path.posix 是兼容所有系统的写法，path.posix.join作用等价于path.join
 // path.join 用于连接路径。该方法的主要用途在于，会正确使用当前系统的路径分隔符，Unix系统是"/"，Windows系统是"\"。(摘自 http://www.runoob.com/nodejs/nodejs-path-module.html)
-var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubStatic)
+var staticPath = path.posix.join(config.start.assetsPublicPath, config.start.assetsSubStatic)
 console.log('posix staticPath', staticPath)
 app.use(staticPath, express.static('./static'))
 
