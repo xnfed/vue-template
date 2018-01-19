@@ -1,50 +1,120 @@
-var utils = require('./utils')
-var webpack = require('webpack')
-var config = require('../config')
-// 用于合并多个webpack配置文件
-var merge = require('webpack-merge')
+'use strict'
+const path = require('path')
+const utils = require('./utils')
+const webpack = require('webpack')
+const config = require('../config')
+const merge = require('webpack-merge')
+const baseWebpackConfig = require('./webpack.base.conf')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
-// 导入webpack基本配置
-var baseWebpackConfig = require('./webpack.base.conf')
+const env = require('../config/dev.env')
 
-// webpack处理html的插件，可以按自义定规则生成html文件
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-
-// 用于更友好地输出webpack的警告、错误等信息
-var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
-
-// add hot-reload related code to entry chunks
-// 将 Hot-reload 相对路径添加到 webpack.base.conf 的 对应 entry 前
-Object.keys(baseWebpackConfig.entry).forEach(function (name) {
-  baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
-})
-
-// 将webpack基本配置合并进去
-module.exports = merge(baseWebpackConfig, {
+const webpackConfig = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap }) // 调用styleLoaders方法，返回各种css loader
+    rules: utils.styleLoaders({
+      sourceMap: config.dev.productionSourceMap,
+      extract: true,
+      usePostCSS: true
+    })
   },
-  // cheap-module-eval-source-map is faster for development
-  // 指定生成source-map的规则
-  devtool: '#cheap-module-eval-source-map',
+  devtool: config.dev.productionSourceMap ? '#source-map' : false,
+  output: {
+    path: config.dev.assetsRoot
+  },
   plugins: [
-    // 定义全局常量量的插件，在代码中调用process.env会以config.dev.env代替
-    // 注意：插件在接受字符串的值时要用JSON.stringify进行处理，如 a:'a' 要写成 a:JSON.stringify('a')
+    // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': config.dev.env
+      'process.env': env
     }),
-    // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
-    new webpack.HotModuleReplacementPlugin(),
-    // 跳过编译时出错的代码并记录，使编译后运行时的包不会发生错误
-    new webpack.NoEmitOnErrorsPlugin(),
-    // 根据模板生成对应的html文件
-    // https://github.com/ampedandwired/html-webpack-plugin
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        compress: {
+          warnings: false
+        }
+      },
+      sourceMap: config.dev.productionSourceMap,
+      parallel: true
+    }),
+    // extract css into its own file
+    new ExtractTextPlugin({
+      filename: utils.assetsPath('css/[name].[contenthash:8].css'),
+      // Setting the following option to `false` will not extract CSS from codesplit chunks.
+      // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
+      // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`, 
+      // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
+      allChunks: true,
+    }),
+    // Compress extracted CSS. We are using this plugin so that possible
+    // duplicated CSS from different components can be deduped.
+    new OptimizeCSSPlugin({
+      cssProcessorOptions: config.dev.productionSourceMap
+        ? { safe: true, map: { inline: false } }
+        : { safe: true }
+    }),
+    // generate dist index.html with correct asset hash for caching.
+    // you can customize output by editing /index.html
+    // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      // 路径是相对于webpack编译时的上下文目录，说白了就是项目根目录，因此上面可以直接配置index.html，其指向的就是根目录下的index.html
-      filename: 'index.html', // 生成的文件名
-      template: 'index.html', // 模板文件，即根据这个模板文件生成相应的文件 , 是相对于webpack配置项output.path
-      inject: true // 是否将生成的js注入 html
+      filename: config.dev.index,
+      template: 'index.html',
+      inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
     }),
-    new FriendlyErrorsPlugin()
+    // keep module.id stable when vendor modules does not change
+    new webpack.HashedModuleIdsPlugin(),
+    // enable scope hoisting
+    new webpack.optimize.ModuleConcatenationPlugin(),
+    // split vendor js into its own file
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks (module) {
+        // any required modules inside node_modules are extracted to vendor
+        return (
+          module.resource &&
+          /\.js$/.test(module.resource) &&
+          module.resource.indexOf(
+            path.join(__dirname, '../node_modules')
+          ) === 0
+        )
+      }
+    }),
+    // extract webpack runtime and module manifest to its own file in order to
+    // prevent vendor hash from being updated whenever app bundle is updated
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      minChunks: Infinity
+    }),
+    // This instance extracts shared chunks from code splitted chunks and bundles them
+    // in a separate chunk, similar to the vendor chunk
+    // see: https://webpack.js.org/plugins/commons-chunk-plugin/#extra-async-commons-chunk
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'app',
+      async: 'vendor-async',
+      children: true,
+      minChunks: 3
+    }),
+
+    // copy custom static assets
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: config.dev.assetsSubDirectory,
+        ignore: ['.*']
+      }
+    ])
   ]
 })
+
+module.exports = webpackConfig
