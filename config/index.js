@@ -77,7 +77,7 @@ module.exports = {
     assetsSubStatic: 'static',
     assetsSubDirectory: '',
     assetsPublicPath: vfly.static.prod,
-
+    hasVersion: +new Date() || '',
     /**
      * Source Maps
      */
