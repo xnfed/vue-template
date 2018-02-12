@@ -4,6 +4,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router';
 import App from './App'
 import routes from './router'
+import 'Utils/adaptive';
+import './styles/index';
 
 [VueRouter].forEach(plugin => Vue.use(plugin));
 
@@ -11,6 +13,10 @@ Vue.config.productionTip = false
 const router = new VueRouter({
   // mode: 'history',
   routes
+});
+router.beforeEach((to, from, next) => {
+  document.body.scrollTop = 0;
+  next();
 });
 /* eslint-disable no-new */
 new Vue({

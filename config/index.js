@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: vfly.static.start,
     proxyTable: {
       '/api': {
-        target: vfly.globals.api.start,
+        target: vfly.globals.api,
         changeOrigin: true
       }
     },
@@ -45,7 +45,7 @@ module.exports = {
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
     cacheBusting: true,
 
-    cssSourceMap: true,
+    cssSourceMap: true
   },
 
   dev: {
@@ -61,7 +61,7 @@ module.exports = {
     /**
      * Source Maps
      */
-    
+
     productionSourceMap: vfly.devtool.dev,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
