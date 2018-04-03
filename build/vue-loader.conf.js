@@ -1,20 +1,19 @@
-// 引入utils
-var utils = require('./utils')
-// 引入配置文件
-var config = require('../config')
-// 当前是否是生成环境
-var isProduction = process.env.NODE_ENV === 'production'
-
-// vue-loader的options
+'use strict'
+const utils = require('./utils')
+const config = require('../config')
+const isProduction = process.env.NODE_ENV === 'production'
+const sourceMapEnabled = isProduction
+  ? config.build.productionSourceMap
+  : config.dev.productionSourceMap
 module.exports = {
-  loaders: utils.cssLoaders({ // 设置cssLoaders方法的参数
-    sourceMap: isProduction
-      ? config.build.productionSourceMap
-      : config.dev.cssSourceMap,
-    extract: isProduction
+  loaders: utils.cssLoaders({
+    sourceMap: sourceMapEnabled,
+    extract: true
   }),
+  cssSourceMap: sourceMapEnabled,
+  cacheBusting: config.dev.cacheBusting,
   transformToRequire: {
-    video: 'src',
+    video: ['src', 'poster'],
     source: 'src',
     img: 'src',
     image: 'xlink:href'
