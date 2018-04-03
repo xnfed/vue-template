@@ -1,2 +1,4 @@
-//  此文件存放业务中的常量
-export const API_BASE_URL = process.env.NODE_ENV === 'development' ? 'api' : '/tiket-pesawat/api'
+import config from '../../config'
+export const API_BASE_URL = process.env.NODE_ENV === 'development' ? config.dev.assetsPublicPath : config.build.assetsPublicPath
+
+

@@ -1,8 +1,7 @@
-//  此文件存放接口请求
-import http from 'Utils/request'
+import http from '../utils/request'
 
-// 某个接口请求地址方法
-export const getOneAjaxFun = (journeyId) => {
+// 获取请求
+export const getBaggageByJourneyId = (journeyId) => {
     return http.get('journey/queryBaggageByJourneyId', {
         params: {
             journeyId

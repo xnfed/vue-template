@@ -1,6 +1,8 @@
-import {
-    isiOS
-} from './isAPP';
+function isiOS() {
+    let UA = navigator.userAgent;
+    let isiOS = !!UA.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    return isiOS;
+}
 
 const iframeLoad = src => {
     let iframe = document.createElement('iframe')

@@ -90,8 +90,8 @@ const cache = {
     store: store.enabled ? store : cookie,
     cookie: {
         // expire Day
-        set: (key, value, expires = 7, options = {}) => {
-            cookie.set(key, value, options);
+        set: (key, value, expires = 7) => {
+            cookie.set(key, value);
             return cache.cookie;
         },
         get: (key) => {
