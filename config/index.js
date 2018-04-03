@@ -5,12 +5,6 @@
 const path = require('path')
 const vfly = require('./vfly.config')
 module.exports = {
-<<<<<<< HEAD
-  build: {
-    env: require('./prod.env'),
-    index: path.resolve(__dirname, '../dist/prod/index.html'),
-    assetsRoot: path.resolve(__dirname, '../dist/prod'),
-=======
   start: {
 
     // Paths
@@ -60,7 +54,6 @@ module.exports = {
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist/dev'),
->>>>>>> 28b4dbf35577b64a30d4fbd808ed636ef474bf5a
     assetsSubStatic: 'static',
     assetsSubDirectory: '',
     assetsPublicPath: vfly.static.dev + 'dev',
@@ -74,12 +67,6 @@ module.exports = {
     devtool: '#source-map',
     cacheBusting: true
   },
-<<<<<<< HEAD
-  dev: {
-    env: require('./dev.env'),
-    index: path.resolve(__dirname, '../dist/dev/index.html'),
-    assetsRoot: path.resolve(__dirname, '../dist/dev'),
-=======
 
   build: {
     // Template for index.html
@@ -87,7 +74,6 @@ module.exports = {
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist/prod'),
->>>>>>> 28b4dbf35577b64a30d4fbd808ed636ef474bf5a
     assetsSubStatic: 'static',
     assetsSubDirectory: '',
     assetsPublicPath: vfly.static.prod + 'prod',
@@ -111,32 +97,5 @@ module.exports = {
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report
-<<<<<<< HEAD
-  },
-  start: {
-    env: require('./start.env'),
-    host: 'http://localhost:',
-    port: 8080, // 与后端服务端口保持一致
-    autoOpenBrowser: true,
-    assetsSubStatic: 'static',
-    assetsSubDirectory: '',
-    assetsPublicPath: '/',
-    proxyTable: {
-      '/api': {
-        target: 'http://localhost',
-        changeOrigin: true
-        // pathRewrite: {
-        //   '^/api': '/api'
-        // }
-      }
-    },
-    // CSS Sourcemaps off by default because relative paths are "buggy"
-    // with this option, according to the CSS-Loader README
-    // (https://github.com/webpack/css-loader#sourcemaps)
-    // In our experience, they generally work as expected,
-    // just be aware of this issue when enabling this option.
-    cssSourceMap: false
-=======
->>>>>>> 28b4dbf35577b64a30d4fbd808ed636ef474bf5a
   }
 }

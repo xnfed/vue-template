@@ -23,12 +23,7 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap,
   output: {
     path: config.build.assetsRoot,
-<<<<<<< HEAD
-    filename: utils.assetsPath('js/[name].[hash:8].js'),
-    chunkFilename: utils.assetsPath('js/[name].[id].[chunkhash].js') // chunkFilename请参考 http://react-china.org/t/webpack-output-filename-output-chunkfilename/2256/2
-=======
     filename: utils.assetsPath('js/[name].[hash:12].js')
->>>>>>> 28b4dbf35577b64a30d4fbd808ed636ef474bf5a
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -46,18 +41,12 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     // extract css into its own file
     new ExtractTextPlugin({
-<<<<<<< HEAD
-        filename: utils.assetsPath('css/[name].[hash:8].css'),
-        // 抽取vue里面scope里样式为独立样式文件
-        allChunks: true
-=======
       filename: utils.assetsPath('css/[name].[contenthash:8].css'),
       // Setting the following option to `false` will not extract CSS from codesplit chunks.
       // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
       // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`,
       // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
       allChunks: true
->>>>>>> 28b4dbf35577b64a30d4fbd808ed636ef474bf5a
     }),
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
