@@ -56,7 +56,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist/dev'),
     assetsSubStatic: 'static',
     assetsSubDirectory: '',
-    assetsPublicPath: vfly.static.dev + 'dev',
+    assetsPublicPath: vfly.static.dev,
 
     /**
      * Source Maps
@@ -76,7 +76,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist/prod'),
     assetsSubStatic: 'static',
     assetsSubDirectory: '',
-    assetsPublicPath: vfly.static.prod + 'prod',
+    assetsPublicPath: vfly.static.prod,
     /**
      * Source Maps
      */
